@@ -100,11 +100,74 @@ Once running, visit `http://localhost:8000/docs` for Swagger UI — test endpoin
 
 ---
 
+## Level 2 — Docker Container
+
+### Build & Run
+
+```bash
+cd /root/claude/ai_mlops
+docker build -t house-price-api:v1 .
+docker run -d --name house-price-api -p 8000:8000 house-price-api:v1
+```
+
+### What's Inside
+
+```
+Dockerfile
+  ├── FROM python:3.11-slim          ← minimal base image
+  ├── COPY requirements.txt          ← pinned deps from model artifact
+  ├── RUN pip install                ← deps + fastapi + uvicorn
+  ├── COPY models/v1/               ← model artifact baked in
+  ├── COPY src/api.py               ← API code
+  └── CMD uvicorn                   ← starts server on :8000
+```
+
+### Architecture
+
+```
+Docker Container
+┌──────────────────────────────────┐
+│  python:3.11-slim                │
+│  ├── FastAPI (src/api.py)        │
+│  ├── model.joblib                │
+│  ├── model_meta.json             │
+│  └── uvicorn :8000               │
+└──────────────────────────────────┘
+  ↕ port 8000
+Host / K8s / any Docker runtime
+```
+
+### Useful Commands
+
+```bash
+# Check logs
+docker logs house-price-api
+
+# Test
+curl http://localhost:8000/health
+
+# Stop & remove
+docker stop house-price-api && docker rm house-price-api
+
+# New model version → rebuild
+docker build -t house-price-api:v2 .
+```
+
+### Why Docker
+
+| Without Docker | With Docker |
+|----------------|-------------|
+| "Works on my machine" | Works everywhere |
+| Manual pip install | Deps baked into image |
+| Python version mismatch risk | Exact Python version |
+| Model file path issues | Fixed paths inside container |
+
+---
+
 ## Next Levels
 
 | Level | Approach | What It Adds |
 |-------|----------|-------------|
-| 2 | Docker container | Portable, reproducible environment |
 | 3 | OpenFaaS on K8s | Scale-to-zero, auto-scaling, Prometheus metrics |
 | 4 | MLflow serving | Model registry integration, stage promotion |
 
