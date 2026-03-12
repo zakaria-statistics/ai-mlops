@@ -78,7 +78,7 @@ axes[2].set_title('Price Box Plot')
 axes[2].set_ylabel('Price ($)')
 
 plt.tight_layout()
-plt.savefig('03-data-exploration/price_distribution.png', dpi=150, bbox_inches='tight')
+plt.savefig('../reports/figures/price_distribution.png', dpi=150, bbox_inches='tight')
 plt.show()
 
 print(f"\nPrice Summary:")
@@ -109,7 +109,7 @@ ax.set_title('Feature Correlations with Price')
 ax.set_xlabel('Correlation Coefficient')
 ax.axvline(x=0, color='black', linewidth=0.5)
 plt.tight_layout()
-plt.savefig('03-data-exploration/correlations.png', dpi=150, bbox_inches='tight')
+plt.savefig('../reports/figures/correlations.png', dpi=150, bbox_inches='tight')
 plt.show()
 
 # %% [markdown]
@@ -128,7 +128,7 @@ for i, feat in enumerate(top_features):
     axes[i].set_title(f'{feat} vs Price\n(r={df[feat].corr(df["price"]):.2f})')
 
 plt.tight_layout()
-plt.savefig('03-data-exploration/top_features_scatter.png', dpi=150, bbox_inches='tight')
+plt.savefig('../reports/figures/top_features_scatter.png', dpi=150, bbox_inches='tight')
 plt.show()
 
 # %% [markdown]
@@ -148,7 +148,7 @@ for i, feat in enumerate(cat_features):
 
 plt.suptitle('Price by Categorical Features', y=1.02)
 plt.tight_layout()
-plt.savefig('03-data-exploration/categorical_vs_price.png', dpi=150, bbox_inches='tight')
+plt.savefig('../reports/figures/categorical_vs_price.png', dpi=150, bbox_inches='tight')
 plt.show()
 
 # %% [markdown]
@@ -197,7 +197,7 @@ axes[1].set_title('Top 15 Zipcodes by Median Price')
 axes[1].set_xlabel('Median Price ($)')
 
 plt.tight_layout()
-plt.savefig('03-data-exploration/geographic_analysis.png', dpi=150, bbox_inches='tight')
+plt.savefig('../reports/figures/geographic_analysis.png', dpi=150, bbox_inches='tight')
 plt.show()
 
 print(f"\nZipcode price range:")
@@ -221,7 +221,7 @@ sns.heatmap(corr_matrix, mask=mask, annot=True, fmt='.2f', cmap='coolwarm',
             center=0, ax=ax, square=True, linewidths=0.5, cbar_kws={'shrink': 0.8})
 ax.set_title('Feature Correlation Heatmap')
 plt.tight_layout()
-plt.savefig('03-data-exploration/correlation_heatmap.png', dpi=150, bbox_inches='tight')
+plt.savefig('../reports/figures/correlation_heatmap.png', dpi=150, bbox_inches='tight')
 plt.show()
 
 # Flag highly correlated pairs
@@ -235,16 +235,17 @@ for i in range(len(corr_matrix)):
 # %% [markdown]
 # ## 11. Summary — Key Findings
 #
-# Fill this in after running all cells above:
+# **Dataset:** 21,613 rows, 21 columns, no missing values.
 #
 # | Finding | Detail | Action for Modeling |
 # |---------|--------|-------------------|
-# | Price is right-skewed | Long tail of expensive homes | Consider log transform |
-# | Top predictor: sqft_living | r ≈ 0.70 | Must include |
-# | Grade strongly predicts | r ≈ 0.67 | Must include |
-# | 33-bedroom outlier | Likely data entry error | Drop or fix |
-# | Location matters a lot | Zipcode creates 10x+ price difference | Encode location properly |
-# | sqft_above ≈ sqft_living | Highly correlated, redundant | May drop one |
-# | yr_built weak alone | Non-linear relationship | May need feature engineering (age) |
-#
-# → Take these findings into [04-data-preparation](../04-data-preparation/)
+# | Price is right-skewed | Skew = 4.02, median $450K vs mean $540K | Log transform target |
+# | Top predictor: sqft_living | r = 0.70 | Must include |
+# | Grade strongly predicts | r = 0.67 | Must include |
+# | sqft_above ≈ sqft_living | r = 0.88, highly redundant | Drop sqft_above |
+# | 8 correlated pairs (r > 0.7) | sqft_living/grade/sqft_above/sqft_living15 cluster | Drop redundant features or use PCA |
+# | 33-bedroom outlier | 1,620 sqft with 33 beds — data entry error | Drop or cap at 10 |
+# | Location drives price | 98039 median $1.9M vs 98168 median $235K (8.1x) | Encode zipcode or use lat/long |
+# | yr_built weak predictor | r = 0.05, nearly no linear relationship | Engineer age feature instead |
+# | Waterfront premium | r = 0.27 but only 0.7% of homes | Keep as binary flag |
+# | No missing values | Clean dataset | No imputation needed |
