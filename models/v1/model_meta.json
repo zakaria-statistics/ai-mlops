@@ -1,0 +1,31 @@
+{
+  "features": [
+    "bedrooms",
+    "bathrooms",
+    "sqft_living",
+    "sqft_lot",
+    "floors",
+    "waterfront",
+    "view",
+    "condition",
+    "grade",
+    "sqft_basement",
+    "lat",
+    "long",
+    "sqft_living15",
+    "sqft_lot15",
+    "house_age",
+    "has_renovation"
+  ],
+  "n_features": 16,
+  "target": "log_price (log1p transformed)",
+  "inverse_transform": "np.expm1(prediction) to get dollars",
+  "model": "XGBoost",
+  "metrics": {
+    "rmse_log": 0.1617,
+    "r2": 0.9082,
+    "mae_dollars": 64514.0
+  },
+  "training_rows": 17290,
+  "random_state": 42
+}
