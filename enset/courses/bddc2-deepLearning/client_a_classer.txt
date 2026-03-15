@@ -1,0 +1,16 @@
+#élément à classer????
+""""
+Utilisez notre réseau de neurones pour prédire si le client suivant va ou non quitter la banque dans les 6 mois :
+Pays : France
+Score de crédit : 600
+Genre : Masculin
+Âge : 40 ans
+Durée depuis entrée dans la banque : 3 ans
+Balance : 60000 €
+Nombre de produits : 2
+Carte de crédit ? Oui
+Membre actif ? : Oui
+Salaire estimé : 50000 €
+
+
+"""

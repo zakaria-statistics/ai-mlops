@@ -1,0 +1,82 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pnd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.preprocessing import StandardScaler #
+
+
+dataset=pnd.read_csv("Churn_Modelling.csv")
+
+
+dataset1=dataset.iloc[:,3:14]
+
+onehotencoder=OneHotEncoder()
+pays=onehotencoder.fit_transform(dataset[['Geography']])#.toarray()
+pays=pays.toarray()
+result1=pnd.DataFrame(pays,columns=['pays1','pays2','pays3'])
+result2=result1.drop('pays3', axis=1)
+
+
+dataset1_without_geog=dataset1.drop(dataset1[['Geography']],axis=1)
+dataset2=pnd.concat([result2,dataset1_without_geog],axis=1)
+
+label_encoder=LabelEncoder()
+dataset2['Gender']= label_encoder.fit_transform(dataset2['Gender']) 
+#dataset2=pnd.concat([result2,result3],axis=1)
+
+
+
+X=dataset2.iloc[:,:11]#features
+y=dataset.iloc[:,11] #target
+
+
+
+#rescaling: il ne faut pas l'appliquer avant de faire le spliting. pour ne pas influencer sur le dataset de test
+#rescale tarind data à part
+#rescale test data à part
+#c'est pour cela il faut commencer par spliting data avant de faire le rescaling: standar, normalization
+
+X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.25) #split
+
+
+
+#train, sa propre moyenne et un sd, et pour le teste une autre et sd
+sc=StandardScaler()
+X_train=sc.fit_transform(X_train)#
+X_test=sc.transform(X_test) #
+
+
+
+
+import keras
+from keras.models import Sequential #class pour initialiser 
+from keras.layers import Dense
+
+
+
+
+#architecture + initialization
+model=Sequential()
+hidden_layer1=Dense(units=6,input_dim=11,activation='relu',kernel_initializer='uniform')
+hidden_layer2=Dense(units=6,activation='relu',kernel_initializer='uniform')
+output_layer=Dense(units=1,activation='sigmoid',kernel_initializer='uniform')
+model.add(hidden_layer1)
+model.add(hidden_layer2)
+model.add(output_layer)
+#préciser: optimizer + loss
+model.compile(optimizer='adam',loss='binary_cross_entropy')#multiclass
+
+
+
+model1.fit(X_train,y_train,epochs=100,batch_size=10)
+
+
+yhat=model.predict(X_test)
+print(yhat)
+
+
+from sklearn.metrics import confusion_matrix
+
+cm=confusion_matrix(y_test,yhat)
+print(cm)
