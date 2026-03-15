@@ -19,3 +19,6 @@ Thumbs.db
 
 # Images (screenshots, not plots)
 notebooks/image.png
+
+# Large binary files
+*.mp4
